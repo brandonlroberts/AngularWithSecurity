@@ -1,0 +1,19 @@
+﻿dotnet tool uninstall --global dotnet-ef 
+dotnet tool install --global dotnet-ef --version 5.0.0
+dotnet ef database drop -f
+
+dotnet ef dbcontext scaffold "" Microsoft.EntityFrameworkCore.SqlServer -d -c ApplicationDbContext --context-dir EfStructures -o Models 
+
+dotnet ef migrations add Initial -o EfStructures\Migrations 
+dotnet ef database update Initial -c AutoLot.Dal.EfStructures.ApplicationDbContext
+
+dotnet ef migrations add ClaimLog 
+dotnet ef migrations add ModifiedDateDaily 
+dotnet ef migrations add ModifiedClaimLogs
+
+
+dotnet ef database update 
+
+dotnet ef migrations remove
+
+dotnet ef migrations script -o allmigrations.sql -i
