@@ -28,6 +28,7 @@ namespace AngularWithSecurity.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
+            throw new AccessViolationException("access violation exception");
             var rng = new Random();
             var result = Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

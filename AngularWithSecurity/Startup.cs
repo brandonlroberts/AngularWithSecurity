@@ -1,5 +1,6 @@
 using AngularWithSecurity.Data;
 using AngularWithSecurity.Models;
+using GlobalErrorHandling.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,7 +39,7 @@ namespace AngularWithSecurity
                 .AddIdentityServerJwt();
 
             // EXCEPTION HANDLING MIDDLEWARE *** REMOVE THIS COMMENT **
-            services.AddTransient<ExceptionHandlingMiddleware>();
+            services.AddTransient<ExceptionMiddleware>();
 
 
             services.AddControllersWithViews();
@@ -58,7 +59,7 @@ namespace AngularWithSecurity
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger)
         {
             if (env.IsDevelopment())
             {
@@ -70,7 +71,7 @@ namespace AngularWithSecurity
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-
+            app.ConfigureExceptionHandler(logger);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
@@ -81,8 +82,7 @@ namespace AngularWithSecurity
             app.UseRouting();
 
             // EXCEPTION HANDLING MIDDLEWARE *** REMOVE THIS COMMENT **
-            app.UseMiddleware<ExceptionHandlingMiddleware>();
-
+            app.ConfigureCustomExceptionMiddleware();
 
             app.UseAuthentication();
             app.UseIdentityServer();
